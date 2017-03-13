@@ -20,7 +20,7 @@ db = boto3.resource('dynamodb').Table(DYNAMODB_TABLE_NAME)
 
 
 
-def get_bus_data():
+def fetch_new_bus_data():
     url = 'http://developer.trimet.org/ws/v2/vehicles?appID={}'.format(
             TRIMET_APP_ID)
     print("Fetching bus data from URL: '{}'".format(url))
@@ -34,7 +34,7 @@ def make_summary(bus_data={}, save=True):
     request_time = datetime.datetime.now()
 
     if not bus_data:
-        bus_data = get_bus_data()
+        bus_data = fetch_new_bus_data()
 
     buses = set([entry['vehicleID'] for entry in bus_data])
     times = [entry['time'] for entry in bus_data]
@@ -70,7 +70,7 @@ def index():
 
 @app.route('/summary.json')
 def bus_summary():
-    summary = make_summary(get_bus_data())
+    summary = make_summary(fetch_new_bus_data())
     return jsonify(summary), 200
 
 
@@ -79,7 +79,7 @@ def show_bus_data():
     """
     Full results from TriMet 
     """
-    return jsonify(get_bus_data(), 200)
+    return jsonify(fetch_new_bus_data(), 200)
 
 
 def save_to_s3(bus_data):
@@ -154,7 +154,7 @@ def save_bus_data(*args, **kwargs):
     """
     This is a scheduled function, doesn't need an http endpoint
     """
-    bus_data = kwargs.get('bus_data', get_bus_data())
+    bus_data = kwargs.get('bus_data', fetch_new_bus_data())
 
     url, resp = save_to_s3(bus_data)
     # save_to_db(bus_data)
@@ -165,7 +165,7 @@ def save_bus_data(*args, **kwargs):
 
 if __name__ == '__main__':
 
-    bus_data = get_bus_data()
+    bus_data = fetch_new_bus_data()
     summary = make_summary(bus_data)
 
     # Output full data in a way that it can be redirected in the shell

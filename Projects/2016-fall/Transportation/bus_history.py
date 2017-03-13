@@ -22,7 +22,17 @@ def authenticate(method, content, content_type, date, path):
 def timestamp():
     return datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
 
-def exportcsv(begin, end, filters = {"logical": "and", "conditions": []}):
+def exportcsv(begin, end, filters = {"logical": "and", "conditions": [
+        {
+            "test": "match",
+            "column_id": "routeNumber",
+            "with_undefined": True,
+            "with_unknown": True,
+            "values": [
+                "4"
+                ]
+            },
+    ]}):
     api_key = API_KEY 
     columns = [
 	       {'column_id': 'vehicle_id'},
@@ -73,8 +83,7 @@ def exportcsv(begin, end, filters = {"logical": "and", "conditions": []}):
 
 def exportcsv_onetime(month, day, hour, minute):
     time = (datetime(2016, month, day, hour, minute, tzinfo=pytz.timezone("US/Pacific")) - datetime(1970,1,1, tzinfo=pytz.utc)).total_seconds()
-    return exportcsv(time, time+60)
-
+    return exportcsv(time, time+10)
 
 if __name__ == "__main__":
     import sys
