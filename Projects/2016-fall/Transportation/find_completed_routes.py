@@ -80,7 +80,7 @@ def main(df, save=True):
 
 
     # Get only data points right after the bus leaves a stop (first or last stop)
-    leavings = df[df.situation.str.contains('leavings')]
+    leavings = df[df.situation.str.contains('leaving')]
 
     # Work with a subset of columns
     # leavings_simple = leavings[['vehicle_id', 'event_timestamp', 'situation']]
@@ -251,4 +251,5 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     data = pd.read_json(args.path_to_bus_trip_json_data)
+    assert( len(data) > 0 )
     main(data, save=True)
