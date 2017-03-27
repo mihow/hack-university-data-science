@@ -1,5 +1,12 @@
 import argparse
 import datetime as dt
+
+# Tell matplotlib to not use an Xwindows backend.
+# Must be set before matplotlib is imported by
+# the other packages
+import matplotlib
+matplotlib.use('Agg')
+
 import pandas as pd
 import seaborn as sns
 from matplotlib import pyplot as plt
